@@ -334,24 +334,6 @@ Authorization: Bearer <token>
 - [Docker 部署说明](docs/deploy-docker.md)
 - [启动说明](docs/STARTUP.md)
 
-## 安全说明
-
-仓库不会提交真实环境变量和密钥。
-
-以下文件应保留在本地或服务器，不应提交：
-
-```text
-.env
-.env.local
-.env.production
-docker/.env
-certbot/
-node_modules/
-target/
-.venv/
-```
-
-如果需要配置高德地图 Key，请在本地创建：
 
 ```text
 frontend/.env.local
