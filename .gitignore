@@ -52,3 +52,4 @@ docker/frontend/dist/
 docker/certbot/
 frontend/.vscode/
 skyroute-ai-deploy.zip
+docs/project-walkthrough.md
