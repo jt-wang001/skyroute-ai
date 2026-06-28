@@ -1,0 +1,54 @@
+# Operating systems
+.DS_Store
+Thumbs.db
+
+# IDEs and editors
+.idea/
+*.iml
+.vscode/
+*.swp
+
+# Java / Maven
+backend/target/
+*.class
+*.jar
+*.war
+*.ear
+*.log
+
+# Node.js / Vue / Vite
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/coverage/
+*.tsbuildinfo
+
+# Python / FastAPI
+algorithm/.venv/
+algorithm/venv/
+algorithm/__pycache__/
+algorithm/.pytest_cache/
+algorithm/.mypy_cache/
+algorithm/.ruff_cache/
+*.py[cod]
+*.egg-info/
+
+# Environment and local configuration
+.env
+.env.*
+!.env.example
+
+# Test and coverage output
+coverage/
+htmlcov/
+.coverage
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+docker/frontend/dist/
+docker/certbot/
+frontend/.vscode/
+skyroute-ai-deploy.zip

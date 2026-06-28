@@ -1,0 +1,32 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#071a29"/>
+      <stop offset="1" stop-color="#0a3146"/>
+    </linearGradient>
+    <linearGradient id="cyan" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#42fff4"/>
+      <stop offset="1" stop-color="#16b8d9"/>
+    </linearGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="2.2" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="64" height="64" rx="16" fill="url(#bg)"/>
+  <path d="M10 42C18 30 27 24 40 24C46 24 50 25 55 28" fill="none" stroke="#ff9c57" stroke-width="3.2" stroke-linecap="round" stroke-dasharray="3 5" opacity="0.95"/>
+  <path d="M14 43L33 12L50 43L39 39L32 53L25 39L14 43Z" fill="url(#cyan)" filter="url(#glow)"/>
+  <path d="M32 18L38 39L32 35L26 39L32 18Z" fill="#e9ffff" opacity="0.9"/>
+  <circle cx="12" cy="18" r="4.5" fill="#ff9c57"/>
+  <circle cx="52" cy="18" r="4.5" fill="#ff9c57"/>
+  <circle cx="12" cy="48" r="4.5" fill="#ff9c57"/>
+  <circle cx="52" cy="48" r="4.5" fill="#ff9c57"/>
+  <circle cx="12" cy="18" r="7.5" fill="none" stroke="#ff9c57" stroke-width="1.5" opacity="0.45"/>
+  <circle cx="52" cy="18" r="7.5" fill="none" stroke="#ff9c57" stroke-width="1.5" opacity="0.45"/>
+  <circle cx="12" cy="48" r="7.5" fill="none" stroke="#ff9c57" stroke-width="1.5" opacity="0.45"/>
+  <circle cx="52" cy="48" r="7.5" fill="none" stroke="#ff9c57" stroke-width="1.5" opacity="0.45"/>
+</svg>

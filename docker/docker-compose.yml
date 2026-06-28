@@ -1,0 +1,116 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: skyroute-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-SkyRoute@123456}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-skyroute_ai}
+      TZ: Asia/Shanghai
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_0900_ai_ci
+      - --max_connections=50
+      - --innodb-buffer-pool-size=128M
+      - --performance_schema=OFF
+    volumes:
+      - skyroute_mysql_data:/var/lib/mysql
+      - ./mysql/conf.d:/etc/mysql/conf.d:ro
+      - ./mysql/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-p${MYSQL_ROOT_PASSWORD:-SkyRoute@123456}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - skyroute-net
+
+  redis:
+    image: redis:7-alpine
+    container_name: skyroute-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --maxmemory 128mb --maxmemory-policy allkeys-lru
+    volumes:
+      - skyroute_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - skyroute-net
+
+  algorithm:
+    build:
+      context: ../algorithm
+    container_name: skyroute-algorithm
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Shanghai
+    expose:
+      - "8000"
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)\""]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+    networks:
+      - skyroute-net
+
+  backend:
+    build:
+      context: ../backend
+    container_name: skyroute-backend
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Shanghai
+      SERVER_PORT: 8080
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-skyroute_ai}
+      MYSQL_USERNAME: root
+      MYSQL_PASSWORD: ${MYSQL_ROOT_PASSWORD:-SkyRoute@123456}
+      ALGORITHM_BASE_URL: http://algorithm:8000
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost,http://127.0.0.1,http://8.219.2.95}
+      JWT_SECRET: ${JWT_SECRET:-change-this-skyroute-ai-production-secret-at-least-32-chars}
+      JWT_EXPIRATION_SECONDS: ${JWT_EXPIRATION_SECONDS:-86400}
+      JAVA_OPTS: ${JAVA_OPTS:--Xms256m -Xmx512m -XX:+UseG1GC}
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      algorithm:
+        condition: service_healthy
+    expose:
+      - "8080"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8080/api/health || exit 1"]
+      interval: 20s
+      timeout: 5s
+      retries: 10
+    networks:
+      - skyroute-net
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: skyroute-nginx
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend/dist:/usr/share/nginx/html:ro
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - skyroute-net
+
+volumes:
+  skyroute_mysql_data:
+  skyroute_redis_data:
+
+networks:
+  skyroute-net:
+    driver: bridge
